@@ -1,25 +1,55 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mail, Lock, User, GraduationCap } from 'lucide-react';
+import { Mail, Lock, User, GraduationCap, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { signUpFunction } from '@/app/actions/auth';
+import { toast } from 'sonner';
+
+// 1. Define the validation schema
+const registerSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(4, 'Password must be at least 4 characters'),
+});
+
+type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = async () => {
-    // await fetch('http://localhost:3001/auth/register', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ name, email, password }),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
+  // 2. Initialize the form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  const onSubmit = async (data: RegisterValues) => {
+    setIsLoading(true);
+    try {
+      const res = await signUpFunction(data);
+      if (res.success) {
+        toast.success('signup successfully');
+        router.push('/login');
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('failed to signup');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -31,12 +61,10 @@ export default function RegisterPage() {
             <GraduationCap size={40} />
             <h1 className='text-3xl font-bold'>Join LMS</h1>
           </div>
-
           <p className='text-lg opacity-90'>
             Start your learning journey today. Create your account and unlock
             unlimited courses and resources.
           </p>
-
           <ul className='space-y-2 text-sm opacity-80'>
             <li>✔ Learn from expert instructors</li>
             <li>✔ Track your progress easily</li>
@@ -56,44 +84,77 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            {/* Name */}
-            <div className='relative'>
-              <User className='absolute left-3 top-3 text-gray-400' size={18} />
-              <Input
-                className='pl-10'
-                placeholder='Full Name'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+              {/* Name */}
+              <div className='space-y-1'>
+                <div className='relative'>
+                  <User
+                    className='absolute left-3 top-3 text-gray-400'
+                    size={18}
+                  />
+                  <Input
+                    {...register('name')}
+                    className={`pl-10 ${errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                    placeholder='Full Name'
+                  />
+                </div>
+                {errors.name && (
+                  <p className='text-xs text-red-500 ml-1'>
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Email */}
-            <div className='relative'>
-              <Mail className='absolute left-3 top-3 text-gray-400' size={18} />
-              <Input
-                className='pl-10'
-                placeholder='Email address'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+              {/* Email */}
+              <div className='space-y-1'>
+                <div className='relative'>
+                  <Mail
+                    className='absolute left-3 top-3 text-gray-400'
+                    size={18}
+                  />
+                  <Input
+                    {...register('email')}
+                    type='email'
+                    className={`pl-10 ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                    placeholder='Email address'
+                  />
+                </div>
+                {errors.email && (
+                  <p className='text-xs text-red-500 ml-1'>
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Password */}
-            <div className='relative'>
-              <Lock className='absolute left-3 top-3 text-gray-400' size={18} />
-              <Input
-                type='password'
-                className='pl-10'
-                placeholder='Password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+              {/* Password */}
+              <div className='space-y-1'>
+                <div className='relative'>
+                  <Lock
+                    className='absolute left-3 top-3 text-gray-400'
+                    size={18}
+                  />
+                  <Input
+                    {...register('password')}
+                    type='password'
+                    className={`pl-10 ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                    placeholder='Password'
+                  />
+                </div>
+                {errors.password && (
+                  <p className='text-xs text-red-500 ml-1'>
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Register */}
-            <Button className='w-full' onClick={handleRegister}>
-              Create Account
-            </Button>
+              <Button className='w-full' type='submit' disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                ) : (
+                  'Create Account'
+                )}
+              </Button>
+            </form>
 
             <div className='flex items-center gap-2 text-sm text-gray-400'>
               <div className='flex-1 h-px bg-gray-200' />
@@ -101,18 +162,19 @@ export default function RegisterPage() {
               <div className='flex-1 h-px bg-gray-200' />
             </div>
 
-            {/* Social Signup */}
             <div className='grid grid-cols-2 gap-3'>
-              <Button variant='outline'>🌐 Google</Button>
-
-              <Button variant='outline'>💻 GitHub</Button>
+              <Button variant='outline' type='button'>
+                🌐 Google
+              </Button>
+              <Button variant='outline' type='button'>
+                💻 GitHub
+              </Button>
             </div>
 
-            {/* Footer */}
             <p className='text-center text-sm text-gray-500'>
               Already have an account?{' '}
               <span
-                className='text-indigo-600 cursor-pointer'
+                className='text-indigo-600 cursor-pointer font-medium hover:underline'
                 onClick={() => router.push('/login')}
               >
                 Sign In

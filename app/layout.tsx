@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/next';
 import { LMSProvider } from '@/lib/context/lms-context';
 import './globals.css';
 import { getMe } from './actions/auth';
 import { AuthProvider } from '@/lib/context/auth-context';
+import { Toaster } from 'sonner';
 
 const _geist = Geist({ subsets: ['latin'] });
 const _geistMono = Geist_Mono({ subsets: ['latin'] });
@@ -45,7 +45,7 @@ export default async function RootLayout({
         <AuthProvider userData={userData?.data}>
           <LMSProvider>
             {children}
-            <Analytics />
+            <Toaster position='top-center' richColors closeButton />
           </LMSProvider>
         </AuthProvider>
       </body>

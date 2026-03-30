@@ -1,8 +1,10 @@
 'use server';
 
 import { base_url } from '@/config';
+import { AuthResponse } from '@/types/auth';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { json } from 'stream/consumers';
 
 export async function handleGoogleLogin() {
   let authUrl = '';
@@ -69,27 +71,33 @@ export async function getValidAccessToken() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // যদি ব্যাকএন্ড কুকি থেকে টোকেন চায় তবেই 'Cookie' হেডার দিবেন
           Cookie: `refreshToken=${refreshToken}`,
         },
-        body: JSON.stringify({ refreshToken }), // ব্যাকএন্ড যদি বডিতে চায়
+        body: JSON.stringify({ refreshToken }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        // মনে রাখবেন backend response structure অনুযায়ী data.data.accessToken হতে পারে
         const newAccessToken = data.accessToken || data.data?.accessToken;
+        const refreshToken = data.refreshToken || data.data?.refreshToken;
 
-        if (newAccessToken) {
+        if (newAccessToken && refreshToken) {
           cookieStore.set('accessToken', newAccessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             path: '/',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+          });
+
+          cookieStore.set('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            path: '/',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
           });
           accessToken = newAccessToken;
         }
       } else {
-        // যদি রিফ্রেশ টোকেন ইনভ্যালিড হয়, তবে সেশন ক্লিয়ার করুন
         cookieStore.delete('accessToken');
         cookieStore.delete('refreshToken');
       }
@@ -119,5 +127,77 @@ export const getMe = async () => {
     return await res.json();
   } catch (error) {
     return null;
+  }
+};
+
+export const signUpFunction = async (data: {
+  name: string;
+  email: string;
+  password: string;
+}): Promise<AuthResponse> => {
+  try {
+    const res = await fetch(`${base_url}/user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || `Error: ${res.status}`);
+    }
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : 'An unexpected error occurred',
+    };
+  }
+};
+
+export const loginFunction = async (data: {
+  email: string;
+  password: string;
+}): Promise<AuthResponse> => {
+  const cookieStore = await cookies();
+  try {
+    const res = await fetch(`${base_url}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.message || `Error: ${res.status}`);
+    }
+
+    cookieStore.set('accessToken', result.data.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    cookieStore.set('refreshToken', result.data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : 'An unexpected error occurred',
+    };
   }
 };
