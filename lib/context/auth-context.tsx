@@ -40,6 +40,7 @@ export const AuthProvider = ({
   useEffect(() => {
     if (userData) {
       setUser(userData);
+      setLoading(false);
     }
   }, [userData]);
 

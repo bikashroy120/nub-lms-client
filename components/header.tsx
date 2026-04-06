@@ -16,7 +16,6 @@ export function Header() {
   const { currentUser, setCurrentUser } = useLMS();
   const { user, logout } = useAuth();
 
-  console.log('==========header log======', user);
 
   const switchRole = (role: 'admin' | 'teacher' | 'student') => {
     setCurrentUser({
