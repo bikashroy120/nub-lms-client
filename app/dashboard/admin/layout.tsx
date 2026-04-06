@@ -6,7 +6,7 @@ import React from 'react';
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <AdminProtected>
-      <div className='flex h-screen'>
+      <div className='flex h-screen bg-[#f8f8f8]'>
         <AdminSidebar />
         <div className=' flex-1 flex flex-col'>
           <AdminNavbar />

@@ -3,7 +3,7 @@ import React from 'react';
 
 const AdminNavbar = () => {
   return (
-    <div className=' w-full flex items-center h-14 justify-between px-4 border-b shadow'>
+    <div className=' w-full flex items-center h-14 justify-between px-4 border-b shadow bg-white'>
       <div>
         <input
           type='text'

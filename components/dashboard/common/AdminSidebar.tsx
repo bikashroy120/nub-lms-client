@@ -54,7 +54,7 @@ const AdminSidebar = () => {
     <motion.div
       initial={{ x: -200 }}
       animate={{ x: 0 }}
-      className='w-64 h-full p-4 border-r shadow'
+      className='w-64 h-full p-4 border-r shadow bg-white'
     >
       <h2 className=' text-primary font-bold text-xl mb-5'>Learn Hub</h2>
 
