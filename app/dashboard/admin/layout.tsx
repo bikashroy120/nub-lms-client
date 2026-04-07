@@ -10,7 +10,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         <AdminSidebar />
         <div className=' flex-1 flex flex-col'>
           <AdminNavbar />
-          <main className='p-4'>{children}</main>
+          <main className='p-5'>{children}</main>
         </div>
       </div>
     </AdminProtected>

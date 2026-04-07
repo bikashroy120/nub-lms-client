@@ -16,37 +16,40 @@ const AdminBreadcrumbs = () => {
   if (pathNodes.length === 0) return null;
 
   return (
-    <nav
-      aria-label='Breadcrumb'
-      className='flex items-center space-x-2 text-sm text-gray-600 mb-6'
-    >
-      <span className='flex items-center hover:text-primary transition-colors'>
-        <Home size={16} />
-      </span>
-      {pathNodes.map((node, index) => {
-        const href = `/${allNodes.slice(0, dashboardIndex + index + 2).join('/')}`;
-        const isLast = index === pathNodes.length - 1;
-        const label =
-          node.charAt(0).toUpperCase() + node.slice(1).replace(/-/g, ' ');
+    <div className=' bg-white rounded py-3 px-5 shadow mb-6'>
+      <h2 className=' text-xl font-bold mb-2 text-gray-700'>Users</h2>
+      <nav
+        aria-label='Breadcrumb'
+        className='flex items-center space-x-2 text-sm text-gray-600'
+      >
+        <span className='flex items-center hover:text-primary transition-colors'>
+          <Home size={16} />
+        </span>
+        {pathNodes.map((node, index) => {
+          const href = `/${allNodes.slice(0, dashboardIndex + index + 2).join('/')}`;
+          const isLast = index === pathNodes.length - 1;
+          const label =
+            node.charAt(0).toUpperCase() + node.slice(1).replace(/-/g, ' ');
 
-        return (
-          <React.Fragment key={href}>
-            <ChevronRight size={14} className='mx-1 text-gray-400' />
+          return (
+            <React.Fragment key={href}>
+              <ChevronRight size={14} className='mx-1 text-gray-400' />
 
-            {isLast ? (
-              <span className='font-semibold text-primary'>{label}</span>
-            ) : (
-              <Link
-                href={href}
-                className='hover:text-primary transition-colors hover:underline'
-              >
-                {label}
-              </Link>
-            )}
-          </React.Fragment>
-        );
-      })}
-    </nav>
+              {isLast ? (
+                <span className='font-semibold text-primary'>{label}</span>
+              ) : (
+                <Link
+                  href={href}
+                  className='hover:text-primary transition-colors hover:underline'
+                >
+                  {label}
+                </Link>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </nav>
+    </div>
   );
 };
 
