@@ -8,9 +8,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     <AdminProtected>
       <div className='flex h-screen bg-[#f8f8f8]'>
         <AdminSidebar />
-        <div className=' flex-1 flex flex-col'>
+        <div className=' flex-1 flex flex-col min-w-0'>
           <AdminNavbar />
-          <main className='p-5'>{children}</main>
+          <main className='flex-1 p-5 overflow-y-auto'>{children}</main>
         </div>
       </div>
     </AdminProtected>
