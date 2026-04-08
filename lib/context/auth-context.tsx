@@ -42,6 +42,7 @@ export const AuthProvider = ({
       setUser(userData);
       setLoading(false);
     }
+    setLoading(false);
   }, [userData]);
 
   const logout = async () => {

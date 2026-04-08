@@ -38,7 +38,11 @@ export default function LoginPage() {
       const result = await loginFunction(data);
       if (result.success) {
         toast.success('login successfully');
-        router.push('/');
+        if (result.data.user.role === 'admin') {
+          router.push('/dashboard/admin');
+        } else {
+          router.push('/');
+        }
         router.refresh();
       } else {
         toast.error(result.message);

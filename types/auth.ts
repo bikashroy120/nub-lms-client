@@ -13,3 +13,10 @@ export interface AuthResponse {
   message: string;
   data?: any;
 }
+
+export interface IResponse {
+  success: boolean;
+  statusCode?: number;
+  message: string;
+  data?: any;
+}
