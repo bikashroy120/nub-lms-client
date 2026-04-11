@@ -1,7 +1,7 @@
 'use server';
 
 import { base_url } from '@/config';
-import { AuthResponse } from '@/types/auth';
+import { AuthResponse, User } from '@/types/auth';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { json } from 'stream/consumers';
@@ -200,4 +200,17 @@ export const loginFunction = async (data: {
         error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
+};
+
+export const getUserByAdmin = async () => {
+  const res = await fetch(`${base_url}/user`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+  return await res.json();
 };
