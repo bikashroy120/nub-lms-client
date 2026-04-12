@@ -81,7 +81,7 @@ export function Header() {
                   {user.name.split(' ')[0]}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
+              <DropdownMenuContent align='end' className=' bg-white'>
                 <div className='px-2 py-1.5 text-sm font-semibold'>
                   {user.name}
                 </div>
@@ -102,6 +102,10 @@ export function Header() {
                     </DropdownMenuItem>
                   </>
                 )}
+
+                <DropdownMenuItem onClick={() => logout()}>
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

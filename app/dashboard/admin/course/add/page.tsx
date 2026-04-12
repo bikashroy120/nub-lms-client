@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,6 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import AdminSelect from '@/components/dashboard/courses/AdminSelect';
+import CategorySelect from '@/components/dashboard/courses/CategorySelect';
+import { createCourse } from '@/app/actions/course';
+import { toast } from 'sonner';
 
 
 const courseSchema = z.object({
@@ -22,21 +26,10 @@ const courseSchema = z.object({
   isPublished: z.boolean().default(false),
 });
 
-type CourseFormValues = z.infer<typeof courseSchema>;
-
-// মক ডাটা (পরবর্তীতে API থেকে আসবে)
-const instructorOptions = [
-  { label: 'Bikash Chandra', value: 1 },
-  { label: 'Anisul Islam', value: 2 },
-];
-
-const categoryOptions = [
-  { label: 'Web Development', value: 101 },
-  { label: 'App Development', value: 102 },
-  { label: 'UI/UX Design', value: 103 },
-];
+export type CourseFormValues = z.infer<typeof courseSchema>;
 
 const CreateCoursePage = () => {
+  const [loading, setLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -50,13 +43,26 @@ const CreateCoursePage = () => {
   });
 
   const onSubmit = async (data: CourseFormValues) => {
-    console.log('Final Course Data:', data);
-    // এখানে আপনার সার্ভার অ্যাকশন বা API কল হবে
+    setLoading(true)
+    try {
+      const res = await createCourse(data)
+
+      if (res.success) {
+        toast.success("course create Successfully")
+      } else {
+        toast.error(res.message)
+      }
+
+    } catch (error) {
+      toast.error('failed to create')
+    } finally {
+      setLoading(false)
+    }
   };
 
   return (
     <div className="flex justify-center items-center py-5">
-      <Card className="w-full max-w-3xl shadow-md border-t-4 border-t-blue-600 mx-4">
+      <Card className="w-full max-w-3xl shadow-md border-t-4 border-t-primary mx-4">
         <CardHeader className="border-b bg-white">
           <CardTitle className="text-2xl font-bold text-gray-800">
             Create New Course
@@ -66,7 +72,7 @@ const CreateCoursePage = () => {
 
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            
+
             {/* Title Field */}
             <CustomInput
               label="Course Title"
@@ -89,20 +95,15 @@ const CreateCoursePage = () => {
 
             {/* Instructor & Category Select */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <CustomSelect
-                label="Instructor"
+              <AdminSelect
                 name="instructorId"
                 register={register}
-                errors={errors}
-                options={instructorOptions}
-              />
-              <CustomSelect
-                label="Category"
+                errors={errors} />
+
+              <CategorySelect
                 name="categoryId"
                 register={register}
-                errors={errors}
-                options={categoryOptions}
-              />
+                errors={errors} />
             </div>
 
             {/* Thumbnail URL */}
@@ -123,13 +124,13 @@ const CreateCoursePage = () => {
                 register={register}
                 errors={errors}
               />
-              
-              <div className="flex items-center space-x-3 p-4 border rounded-md bg-white h-[54px] mt-auto">
+
+              <div className="flex items-center space-x-3 p-3 border rounded-md bg-white h-[43px] mt-auto">
                 <input
                   type="checkbox"
                   id="isPublished"
                   {...register('isPublished')}
-                  className="w-5 h-5 rounded accent-blue-600 cursor-pointer"
+                  className="w-4 h-4 rounded accent-blue-600 cursor-pointer"
                 />
                 <Label htmlFor="isPublished" className="font-medium cursor-pointer">
                   Publish this course now
@@ -141,13 +142,10 @@ const CreateCoursePage = () => {
             <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t">
               <Button
                 type="submit"
-                disabled={isSubmitting}
-                className="flex-1 py-6 bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
+                disabled={loading}
+                className="flex-1 py-6 bg-primary hover:bg-blue-700 text-white font-bold cursor-pointer"
               >
-                {isSubmitting ? 'Creating Course...' : 'Create Course'}
-              </Button>
-              <Button type="button" variant="outline" className="flex-1 py-6">
-                Cancel
+                {loading ? 'Creating Course...' : 'Create Course'}
               </Button>
             </div>
 

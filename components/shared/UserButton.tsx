@@ -13,9 +13,6 @@ import { useAuth } from '@/lib/context/auth-context';
 
 const UserButton = () => {
   const { user } = useAuth();
-
-  console.log(user);
-
   return (
     <div>
       <DropdownMenu>

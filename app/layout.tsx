@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { LMSProvider } from '@/lib/context/lms-context';
 import { getMe } from './actions/auth';
-import '../styles/globals.css';
+import '@/styles/globals.css';
 import { AuthProvider } from '@/lib/context/auth-context';
 import { Toaster } from 'sonner';
 

@@ -1,6 +1,7 @@
 'use server';
 
 import { base_url } from '@/config';
+import { buildQueryParams } from '@/lib/utils';
 import { AuthResponse, User } from '@/types/auth';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -98,8 +99,7 @@ export async function getValidAccessToken() {
           accessToken = newAccessToken;
         }
       } else {
-        cookieStore.delete('accessToken');
-        cookieStore.delete('refreshToken');
+        return null;
       }
     } catch (error) {
       console.error('Refresh Token Error:', error);
@@ -202,8 +202,9 @@ export const loginFunction = async (data: {
   }
 };
 
-export const getUserByAdmin = async () => {
-  const res = await fetch(`${base_url}/user`, {
+export const getUserByAdmin = async (queryData: Record<string, any> = {}) => {
+  const query = buildQueryParams(queryData);
+  const res = await fetch(`${base_url}/user?${query}`, {
     headers: {
       'Content-Type': 'application/json',
     },

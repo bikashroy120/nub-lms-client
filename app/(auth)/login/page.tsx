@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { useAuth } from '@/lib/context/auth-context';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -23,6 +24,7 @@ type loginValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+  const { setUserData } = useAuth()
 
   const {
     register,
@@ -40,6 +42,7 @@ export default function LoginPage() {
         toast.success('login successfully');
         if (result.data.user.role === 'admin') {
           router.push('/dashboard/admin');
+          setUserData(result.data.user)
         } else {
           router.push('/');
         }

@@ -21,6 +21,7 @@ export interface User {
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
+  setUserData: (data: User) => void;
   logout: () => Promise<void>;
 }
 
@@ -37,6 +38,11 @@ export const AuthProvider = ({
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
+  const setUserData = (data: User) => {
+    setUser(data)
+    setLoading(false);
+  }
+
   useEffect(() => {
     if (userData) {
       setUser(userData);
@@ -52,7 +58,7 @@ export const AuthProvider = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, logout, setUserData }}>
       {children}
     </AuthContext.Provider>
   );
