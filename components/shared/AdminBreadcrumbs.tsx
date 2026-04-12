@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronRight, Home } from 'lucide-react';
 
-const AdminBreadcrumbs = () => {
+const AdminBreadcrumbs = ({ title = 'User' }: { title: string }) => {
   const pathname = usePathname();
 
   const allNodes = pathname.split('/').filter((node) => node !== '');
@@ -17,7 +17,7 @@ const AdminBreadcrumbs = () => {
 
   return (
     <div className=' bg-white rounded py-3 px-5 shadow mb-6'>
-      <h2 className=' text-xl font-bold mb-2 text-gray-700'>Users</h2>
+      <h2 className=' text-xl font-bold mb-2 text-gray-700'>{title}</h2>
       <nav
         aria-label='Breadcrumb'
         className='flex items-center space-x-2 text-sm text-gray-600'

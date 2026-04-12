@@ -6,7 +6,7 @@ const CategoryPage = async () => {
   const data = await getCategories();
   return (
     <div>
-      <AdminBreadcrumbs />
+      <AdminBreadcrumbs title='Category List' />
       <div>
         <CategoryTable category={data?.data} />
       </div>

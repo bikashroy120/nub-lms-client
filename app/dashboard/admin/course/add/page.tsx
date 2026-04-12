@@ -14,6 +14,7 @@ import AdminSelect from '@/components/dashboard/courses/AdminSelect';
 import CategorySelect from '@/components/dashboard/courses/CategorySelect';
 import { createCourse } from '@/app/actions/course';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 
 const courseSchema = z.object({
@@ -30,6 +31,7 @@ export type CourseFormValues = z.infer<typeof courseSchema>;
 
 const CreateCoursePage = () => {
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -49,6 +51,7 @@ const CreateCoursePage = () => {
 
       if (res.success) {
         toast.success("course create Successfully")
+        router.push('/dashboard/admin/course')
       } else {
         toast.error(res.message)
       }
