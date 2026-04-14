@@ -17,7 +17,7 @@ const AdminBreadcrumbs = ({ title = 'User' }: { title: string }) => {
 
   return (
     <div className=' bg-white rounded py-3 px-5 shadow mb-6'>
-      <h2 className=' text-xl font-bold mb-2 text-gray-700'>{title}</h2>
+      <h2 className=' text-xl font-bold mb-2'>{title}</h2>
       <nav
         aria-label='Breadcrumb'
         className='flex items-center space-x-2 text-sm text-gray-600'

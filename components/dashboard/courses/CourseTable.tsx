@@ -16,7 +16,11 @@ const CourseTable = ({ courses, metaData }: { courses: ICourses[], metaData: IMe
         },
         {
             header: "Title",
-            accessor: 'title' as keyof ICourses,
+            accessor: (row: ICourses) => (
+                <div className=" max-w-[300px] flex text-wrap">
+                    <span>{row.title}</span>
+                </div>
+            ),
         },
         {
             header: "instructor",

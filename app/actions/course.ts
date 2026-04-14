@@ -22,6 +22,7 @@ export const getCourses = async (query: Record<string, any>) => {
       'Content-type': 'application/json',
     },
   });
+
   if (!res.ok) {
     throw new Error('Failed to get course');
   }

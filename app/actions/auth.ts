@@ -178,7 +178,6 @@ export const loginFunction = async (data: {
     if (!res.ok) {
       throw new Error(result.message || `Error: ${res.status}`);
     }
-
     cookieStore.set('accessToken', result.data.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

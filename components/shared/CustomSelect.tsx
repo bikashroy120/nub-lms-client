@@ -23,7 +23,7 @@ export const CustomSelect = <T extends FieldValues>({
       <select
         id={name as string}
         {...register(name)}
-        className={`w-full p-2.5 bg-white border rounded-md outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+        className={`w-full p-2.5 bg-white border rounded-md outline-none focus:ring-[1px] focus:ring-primary transition-all ${
           error ? 'border-red-500' : 'border-gray-200'
         }`}
       >

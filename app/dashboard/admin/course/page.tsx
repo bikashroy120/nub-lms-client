@@ -7,7 +7,6 @@ const Course = async (
 
 ) => {
     const result = await getCourses({});
-    console.log(result.data)
     return (
         <div>
             <AdminBreadcrumbs title='Course List' />
