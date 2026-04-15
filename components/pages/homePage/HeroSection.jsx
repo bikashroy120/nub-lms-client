@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { useLMS } from '@/lib/context/lms-context';
 import { ArrowRight } from 'lucide-react';
@@ -33,7 +35,7 @@ const HeroSection = () => {
           </div>
         </div>
 
-        <div className=' w-full hidden'>
+        <div className=' w-full hidden md:block'>
           <Image
             src={'/hero.webp'}
             width={1500}
@@ -61,11 +63,15 @@ const HeroSection = () => {
             <p className='text-sm text-muted-foreground'>Active Students</p>
           </div>
           <div className='flex flex-col items-center gap-2 border-r py-3 md:py-7'>
-            <div className='text-xl md:text-4xl font-bold text-primary'>500+</div>
+            <div className='text-xl md:text-4xl font-bold text-primary'>
+              500+
+            </div>
             <p className='text-sm text-muted-foreground'>Expert Instructors</p>
           </div>
           <div className='flex flex-col items-center gap-2 py-3 md:py-7'>
-            <div className='text-xl md:text-4xl font-bold text-primary'>4.8★</div>
+            <div className='text-xl md:text-4xl font-bold text-primary'>
+              4.8★
+            </div>
             <p className='text-sm text-muted-foreground'>Average Rating</p>
           </div>
         </div>

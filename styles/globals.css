@@ -41,6 +41,11 @@
     radial-gradient(circle at left bottom, #15cb8640 30%, transparent 50%),
     radial-gradient(circle at right bottom, #47cef880 20%, transparent 40%),
     #d6d6d6;
+
+  --course-bg:
+    radial-gradient(circle at left top, #029ecd50 5%, transparent 80%),
+    radial-gradient(circle at left bottom, #15cb8640 30%, transparent 50%),
+    radial-gradient(circle at right bottom, #47cef880 20%, transparent 40%);
 }
 
 .dark {
@@ -75,6 +80,11 @@
     radial-gradient(circle at left bottom, #0a5c3d40 30%, transparent 50%),
     radial-gradient(circle at right bottom, #23677a80 20%, transparent 40%),
     #1a1a1a;
+
+  --course-bg:
+    radial-gradient(circle at left top, #029ecd50 5%, transparent 80%),
+    radial-gradient(circle at left bottom, #15cb8640 30%, transparent 50%),
+    radial-gradient(circle at right bottom, #47cef880 20%, transparent 40%);
 }
 
 @theme inline {
@@ -109,6 +119,7 @@
 
   /* Background Image Mapping in v4 */
   --background-image-header-pattern: var(--header-bg);
+  --background-image-course-pattern: var(--course-bg);
 }
 
 @layer base {
@@ -124,7 +135,14 @@
 
 @layer utilities {
   .bg-header {
-    background: var(--background-image-header-pattern); /* ✅ KEY FIX */
+    background: var(--background-image-header-pattern);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .bg-course {
+    background: var(--background-image-course-pattern);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
