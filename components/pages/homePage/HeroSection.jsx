@@ -12,7 +12,7 @@ const HeroSection = () => {
 
   return (
     <div className='bg-header relative pb-20 md:pb-25'>
-      <section className='max-w-6xl mx-auto px-4 py-5  flex items-center flex-col md:flex-row gap-10 md:py-7'>
+      <section className='max-w-7xl mx-auto px-4 py-5  flex items-center flex-col md:flex-row gap-10 md:py-7'>
         <div className=' w-full space-y-6'>
           <h1 className='text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl'>
             Upskill for a Better Career
@@ -48,7 +48,7 @@ const HeroSection = () => {
         {/* Stats */}
       </section>
 
-      <div className=' absolute bottom-[-80px]  md:bottom-[-100px]  w-full left-[50%] translate-x-[-50%]  max-w-6xl  '>
+      <div className=' absolute bottom-[-80px]  md:bottom-[-100px]  w-full left-[50%] translate-x-[-50%]  max-w-7xl  '>
         <div className=' grid grid-cols-2 md:gap-8  md:grid-cols-4 md:py-10  bg-white rounded-2xl shadow mx-3'>
           <div className='flex flex-col items-center border-b md:border-b-0 border-r py-3 md:py-7 gap-2'>
             <div className='text-xl md:text-4xl font-bold text-primary'>

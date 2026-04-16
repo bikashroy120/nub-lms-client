@@ -32,7 +32,7 @@ export default function ConsultationSection() {
     };
 
     return (
-        <section className="max-w-6xl mx-auto my-12 p-4">
+        <section className="max-w-7xl mx-auto my-12 p-4">
             <div className="bg-[#E0F7FA] rounded-3xl p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row items-center gap-12">
 
                 {/* Left Content */}

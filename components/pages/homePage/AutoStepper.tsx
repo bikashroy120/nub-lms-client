@@ -50,7 +50,7 @@ const AutoStepper = () => {
     }, []);
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl h-[480px] w-full overflow-hidden shadow-2xl bg-gray-100 aspect-video lg:aspect-square">
                 <AnimatePresence mode="wait">
                     <motion.div

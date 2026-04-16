@@ -3,10 +3,10 @@ import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import HeroSection from "@/components/pages/homePage/HeroSection"
 import Courses from '@/components/pages/homePage/Courses'
-import CourseCardSkeleton from '@/components/skeleton/CourseCardSkeleton'
 import { Suspense } from 'react'
 import AutoStepper from '@/components/pages/homePage/AutoStepper'
 import ConsultationSection from '@/components/pages/homePage/ConsultationSection'
+import WhyChooseUs from '@/components/pages/homePage/WhyChooseUs'
 
 export default function Home() {
 
@@ -15,17 +15,12 @@ export default function Home() {
       <Header />
       <main className="min-h-screen ">
         <HeroSection />
-
         <Suspense fallback={<h2>Loading</h2>}>
           <Courses />
         </Suspense>
-
         <AutoStepper />
+        <WhyChooseUs />
         <ConsultationSection />
-
-        <CourseCardSkeleton />
-
-        {/* CTA Section */}
         <section className="border-t border-border bg-primary py-16 text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold md:text-4xl">Ready to Start Learning?</h2>

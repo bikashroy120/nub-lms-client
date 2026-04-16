@@ -1,6 +1,7 @@
 import { base_url } from '@/config';
 import { CourseFormValues } from '../dashboard/admin/course/add/page';
 import { getValidAccessToken } from './auth';
+import { buildQueryParams } from '@/lib/utils';
 
 export const createCourse = async (data: CourseFormValues) => {
   const token = await getValidAccessToken();
@@ -16,7 +17,8 @@ export const createCourse = async (data: CourseFormValues) => {
 };
 
 export const getCourses = async (query: Record<string, any>) => {
-  const res = await fetch(`${base_url}/course`, {
+  const queryString = buildQueryParams(query);
+  const res = await fetch(`${base_url}/course?${queryString}`, {
     next: { revalidate: 120, tags: ['course'] },
     headers: {
       'Content-type': 'application/json',

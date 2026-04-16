@@ -25,7 +25,7 @@ const LevelFilter = () => {
     const searchParams = useSearchParams();
 
     const [selectedTypes, setSelectedTypes] = useState<string[]>(() => {
-        const params = searchParams.get('category');
+        const params = searchParams.get('level');
         return params ? params.split(',').map(t => t.toLowerCase()) : [];
     });
 
@@ -33,9 +33,9 @@ const LevelFilter = () => {
         const params = new URLSearchParams(searchParams.toString());
 
         if (types.length > 0) {
-            params.set('category', types.join(','));
+            params.set('level', types.join(','));
         } else {
-            params.delete('category');
+            params.delete('level');
         }
 
         const query = decodeURIComponent(params.toString());

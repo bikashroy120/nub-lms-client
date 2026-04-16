@@ -10,7 +10,7 @@ import CourseCard from './CourseCard'
 const Courses = async () => {
     const result = await getCourses({})
     return (
-        <section className="max-w-6xl mx-auto px-4 py-20 mt-10 md:mt-20">
+        <section className="max-w-7xl mx-auto px-4 py-20 mt-10 md:mt-20">
             <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl mb-12">
                 Featured Courses
             </h2>
