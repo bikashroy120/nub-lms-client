@@ -21,15 +21,15 @@ interface DataTableProps<T> {
 
 export function DataTable<T>({ columns, data }: DataTableProps<T>) {
   return (
-    <div className='border  border-gray-200 overflow-hidden'>
+    <div className='border  border-gray-200 overflow-hidden rounded-md'>
       <Table>
-        <TableHeader className='bg-[#0858f7]'>
-          <TableRow className='hover:bg-[#0858f7]'>
+        <TableHeader className=' bg-gray-600'>
+          <TableRow className='hover:bg-gray-600/50 transition-colors'>
             {columns.map((column, index) => (
               <TableHead
                 key={index}
                 className={cn(
-                  'text-white px-4 font-semibold uppercase border-r border-r-[#2b77e5] last:border-r-0 text-xs h-12',
+                  'text-white px-4 font-semibold uppercase border-r border-r-gray-500 last:border-r-0 text-xs h-12',
                   column.className,
                 )}
               >
@@ -39,7 +39,6 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* ডাটা থাকলে ম্যাপ করবে, না থাকলে Empty মেসেজ দেখাবে */}
           {data && data.length > 0 ? (
             data.map((item, rowIndex) => (
               <TableRow

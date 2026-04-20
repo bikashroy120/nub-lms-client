@@ -1,200 +1,195 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import {
+  BookOpen,
+  Layers,
+  Users,
+  Image as ImageIcon,
+  Loader2,
+  CheckCircle2,
+  BadgeDollarSign,
+  Briefcase,
+  ChevronRight
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
 import CustomInput from '@/components/shared/CustomInput';
 import { CustomSelect } from '@/components/shared/CustomSelect';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import AdminSelect from '@/components/dashboard/courses/AdminSelect';
 import CategorySelect from '@/components/dashboard/courses/CategorySelect';
-import { createCourse } from '@/app/actions/course';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { AddTags } from '@/components/dashboard/courses/AddTags';
 import AdminBreadcrumbs from '@/components/shared/AdminBreadcrumbs';
+import { createCourse } from '@/app/actions/course';
 import { ImageUpload } from '@/components/shared/ImageUpload';
+import { AddTags } from '@/components/dashboard/courses/AddTags';
 
 
 const courseSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   sortDescription: z.string().optional(),
-  thumbnail: z.string().optional(),
   instructorId: z.number({ coerce: true }).min(1, 'Select an instructor'),
   categoryId: z.number({ coerce: true }).min(1, 'Select a category'),
   price: z.number({ coerce: true }).default(0),
   isPublished: z.boolean().default(false),
+  level: z.string().min(1, 'Select a level'),
   learn: z.array(z.string()).optional(),
-  level: z.string(),
   included: z.array(z.string()).optional(),
 });
 
 export type CourseFormValues = z.infer<typeof courseSchema>;
 
 const CreateCoursePage = () => {
-  const [loading, setLoading] = useState(false)
-  const [include, setInclude] = useState<string[]>([])
-  const [learn, setLearn] = useState<string[]>([])
+  const [loading, setLoading] = useState(false);
+  const [include, setInclude] = useState<string[]>([]);
+  const [learn, setLearn] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
-  const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<CourseFormValues>({
+  const router = useRouter();
+
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
-    defaultValues: {
-      price: 0,
-      isPublished: false,
-    },
+    defaultValues: { price: 0, isPublished: false, level: 'beginner' },
   });
 
+  const isPublished = watch('isPublished');
+
   const onSubmit = async (data: CourseFormValues) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await createCourse({
-        ...data,
-        learn,
-        included: include,
-      })
-
+      const res = await createCourse({ ...data, learn, included: include });
       if (res.success) {
-        toast.success("course create Successfully")
-        router.push('/dashboard/admin/course')
+        toast.success("Course created successfully!");
+        router.push('/dashboard/admin/course');
       } else {
-        toast.error(res.message)
+        toast.error(res.message);
       }
-
     } catch (error) {
-      toast.error('failed to create')
+      toast.error('Failed to create course');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
-  const levelOption = [
-    {
-      label: "Beginner",
-      value: "beginner"
-    },
-    {
-      label: "Intermediate",
-      value: "intermediate"
-    },
-    {
-      label: "Advance",
-      value: "advance"
-    },
-  ]
-
   return (
-    <>
-      <AdminBreadcrumbs title='Course Add' />
-      <div className="flex justify-center items-start py-5">
-        <Card className="w-full max-w-3xl shadow-md border-t-4 border-t-primary mx-4">
-          <CardHeader className="border-b bg-white">
-            <CardTitle className="text-2xl font-bold text-gray-800">
-              Create New Course
-            </CardTitle>
-            <p className="text-sm text-gray-500">Provide all details to set up your course</p>
-          </CardHeader>
+    <div className="max-w-5xl mx-auto px-4 md:px-6">
+      {/* Header with minimal breadcrumb */}
+      <AdminBreadcrumbs title='Add Course' />
 
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <Card className="border-none  bg-white/70  rounded-xl overflow-hidden">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CardContent className="p-0">
 
-              {/* Title Field */}
-              <CustomInput
-                label="Course Title"
-                name="title"
-                register={register}
-                errors={errors}
-                placeholder="e.g. Full Stack Web Development"
-              />
-
-              {/* Description Field */}
-              <div className="space-y-2">
-                <Label htmlFor="description" className="font-semibold">Description (Optional)</Label>
-                <Textarea
-                  id="description"
-                  {...register('sortDescription')}
-                  placeholder="Write a brief course overview..."
-                  className="min-h-[120px] focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
+            {/* Top Section: Banner Style Upload */}
+            <div className="bg-gray-50/50 p-8 md:p-12 border-b border-gray-100 flex flex-col items-center">
+              <div className="w-full">
+                <ImageUpload onImagesChange={(files: any) => setImages(files)} maxFiles={1} />
               </div>
+            </div>
 
-              {/* Instructor & Category Select */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <AdminSelect
-                  name="instructorId"
-                  register={register}
-                  errors={errors} />
+            <div className="px-8 py-5 md:px-10 space-y-10">
 
-                <CategorySelect
-                  name="categoryId"
-                  register={register}
-                  errors={errors} />
-              </div>
-
-              {/* Thumbnail URL */}
-              <CustomSelect
-                label="Level"
-                name={'level'}
-                register={register}
-                errors={errors}
-                options={levelOption}
-              />
-
-              {/* Price & Published Status */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <CustomInput
-                  label="Course Price ($)"
-                  name="price"
-                  type="number"
-                  register={register}
-                  errors={errors}
-                />
-
-                <div className="flex items-center space-x-3 p-3 border rounded-md bg-white h-[43px] mt-auto">
-                  <input
-                    type="checkbox"
-                    id="isPublished"
-                    {...register('isPublished')}
-                    className="w-4 h-4 rounded accent-blue-600 cursor-pointer"
+              {/* Section 1: Core Details */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                  <CustomInput
+                    label="Course Title"
+                    name="title"
+                    register={register}
+                    errors={errors}
+                    placeholder="Enter a catchy title for your course"
                   />
-                  <Label htmlFor="isPublished" className="font-medium cursor-pointer">
-                    Publish this course now
-                  </Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-bold text-gray-700">Course Sort Description</Label>
+                    <Textarea
+                      {...register('sortDescription')}
+                      placeholder="Write a brief overview of what this course covers..."
+                      className="min-h-[120px] focus-visible:ring-0 py-5.5 focus-visible:ring-offset-0"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <AdminSelect name="instructorId" register={register} errors={errors} setValue={setValue} />
+                  <CategorySelect name="categoryId" register={register} errors={errors} setValue={setValue} />
+                  <CustomSelect
+                    label="Course Level"
+                    name="level"
+                    register={register}
+                    errors={errors}
+                    options={[
+                      { label: "Beginner", value: "beginner" },
+                      { label: "Intermediate", value: "intermediate" },
+                      { label: "Advance", value: "advance" },
+                    ]}
+                  />
                 </div>
               </div>
 
-              {/* Form Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t">
+              <div className="flex flex-col md:flex-row items-end gap-6 w-full md:w-auto">
+                <div className="w-full">
+                  <Label className="text-sm font-bold text-gray-700 mb-2 block">Price (USD)</Label>
+                  <div className="relative">
+                    <BadgeDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                      type="number"
+                      {...register('price')}
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50  rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 border transition-all font-bold text-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4  rounded-2xl border  w-full">
+                  <Switch
+                    id="isPublished"
+                    checked={isPublished}
+                    onCheckedChange={(val) => setValue('isPublished', val)}
+                  />
+                  <div className="leading-tight">
+                    <Label htmlFor="isPublished" className="text-sm font-bold block cursor-pointer">Live Status</Label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Features & Tags */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <AddTags tags={learn} setTags={setLearn} placeholder="What's included in this course" />
+                </div>
+                <div className="space-y-4">
+                  <AddTags tags={include} setTags={setInclude} placeholder="What will you learn in this course" />
+                </div>
+              </div>
+
+              {/* Section 3: Pricing & Publish */}
+              <div className="pt-4 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8">
                 <Button
-                  type="submit"
                   disabled={loading}
-                  className="flex-1 py-6 bg-primary hover:bg-blue-700 text-white font-bold cursor-pointer"
+                  className=" bg-primary hover:bg-indigo-700 w-full text-white h-12 px-10 rounded-2xl shadow-xl cursor-pointer transition-all active:scale-95 group"
                 >
-                  {loading ? 'Creating Course...' : 'Create Course'}
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <>
+                      <span className="font-bold text-base">Create Course</span>
+                      <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                    </>
+                  )}
                 </Button>
               </div>
 
-            </form>
+            </div>
           </CardContent>
-        </Card>
-        <div className=' space-y-7'>
-          <Card className="w-full max-w-md shadow-md border-t-4 border-t-primary px-5 mx-4">
-            <h2 className="text-xl font-semibold ">Upload Product Images</h2>
-            <ImageUpload onImagesChange={(files) => setImages(files)} />
-          </Card>
-          <AddTags tags={include} setTags={setInclude} placeholder='Included in this course' />
-          <AddTags tags={learn} setTags={setLearn} placeholder='You learn in this course' />
-        </div>
-      </div>
-    </>
+        </form>
+      </Card>
+    </div>
   );
 };
 

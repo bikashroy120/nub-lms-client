@@ -37,7 +37,7 @@ const CustomInput = <T extends FieldValues>({
           type={type}
           placeholder={placeholder}
           {...register(name)}
-          className={`pl-3 focus-visible:ring-0 py-5 focus-visible:ring-offset-0 ${
+          className={`pl-3 focus-visible:ring-0 py-5.5 focus-visible:ring-offset-0 ${
             error ? 'border-red-500 focus-visible:ring-red-500' : ''
           }`}
         />

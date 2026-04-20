@@ -43,7 +43,7 @@ export default async function RootLayout({
   const userData = await getMe();
   return (
     <html lang='en'>
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${inter.className} antialiased h-full`}>
         <AuthProvider userData={userData?.data}>
           <LMSProvider>
             {children}

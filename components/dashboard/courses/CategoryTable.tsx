@@ -34,7 +34,6 @@ const CategoryTable = ({ category }: { category: Category[] }) => {
     <div className=' bg-card shadow p-5 rounded-md'>
       <div className=' flex items-center gap-2 justify-between'>
         <h2 className=' font-semibold'>Category List</h2>
-
         <AddCategory />
       </div>
 

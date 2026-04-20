@@ -7,8 +7,8 @@ const page = async () => {
   const usersData = await getUserByAdmin();
 
   return (
-    <div>
-      <AdminBreadcrumbs />
+    <div className=''>
+      <AdminBreadcrumbs title='User List' />
       <div>
         <UsersTable users={usersData.data.data} />
       </div>

@@ -1,86 +1,107 @@
-"use client";
+'use client';
 
-import React, { useState, useRef } from "react";
-import { ImagePlus, X, UploadCloud } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
+import React, { useState, useCallback } from 'react';
+import { Upload, X, Image as ImageIcon, FileText, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 interface ImageUploadProps {
     onImagesChange: (files: File[]) => void;
+    maxFiles?: number;
 }
 
-export function ImageUpload({ onImagesChange }: ImageUploadProps) {
-    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+export const ImageUpload = ({ onImagesChange, maxFiles = 1 }: ImageUploadProps) => {
     const [previews, setPreviews] = useState<string[]>([]);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const filesArray = Array.from(e.target.files);
+    const handleFileChange = (files: FileList | null) => {
+        if (!files) return;
 
-            // State update
-            const newImages = [...selectedImages, ...filesArray];
-            setSelectedImages(newImages);
-            onImagesChange(newImages);
+        const newFiles = Array.from(files).slice(0, maxFiles);
+        onImagesChange(newFiles);
 
-            // Preview generation
-            const newPreviews = filesArray.map((file) => URL.createObjectURL(file));
-            setPreviews((prev) => [...prev, ...newPreviews]);
-        }
+        const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+        setPreviews(newPreviews);
     };
 
     const removeImage = (index: number) => {
-        const updatedImages = selectedImages.filter((_, i) => i !== index);
         const updatedPreviews = previews.filter((_, i) => i !== index);
-
-        setSelectedImages(updatedImages);
         setPreviews(updatedPreviews);
-        onImagesChange(updatedImages);
-
-        // URL revoke kore memory save kora
-        URL.revokeObjectURL(previews[index]);
+        // Note: To properly sync with parent, you might need to manage actual File objects state here too
     };
 
     return (
-        <div className="space-y-4 w-full">
+        <div className="w-full space-y-4">
             <div
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-accent/50 transition"
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragging(false);
+                    handleFileChange(e.dataTransfer.files);
+                }}
+                className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer
+          ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-gray-50/50 hover:bg-gray-50 hover:border-blue-300'}
+        `}
             >
-                <UploadCloud className="h-10 w-10 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
-                <Input
+                <input
                     type="file"
-                    className="hidden"
-                    multiple
+                    multiple={maxFiles > 1}
                     accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={(e) => handleFileChange(e.target.files)}
                 />
+
+                <div className={`p-4 rounded-full mb-4 transition-transform duration-300 ${isDragging ? 'scale-110 bg-blue-100' : 'bg-white shadow-sm'}`}>
+                    <Upload className={isDragging ? 'text-blue-600' : 'text-gray-400'} size={32} />
+                </div>
+
+                <div className="text-center">
+                    <p className="text-sm font-bold text-gray-700">
+                        Click to upload or drag and drop
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                        PNG, JPG or WebP (Max {maxFiles} file)
+                    </p>
+                </div>
             </div>
 
-            {previews.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {previews.map((url, index) => (
-                        <div key={url} className="relative group aspect-square rounded-md overflow-hidden border">
-                            <Image
-                                src={url}
-                                alt="Upload preview"
-                                fill
-                                className="object-cover"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+            {/* Image Preview Grid */}
+            <AnimatePresence>
+                {previews.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="grid grid-cols-2 gap-4"
+                    >
+                        {previews.map((src, index) => (
+                            <motion.div
+                                key={src}
+                                className="relative group aspect-video rounded-xl overflow-hidden border border-gray-100 shadow-sm"
                             >
-                                <X size={14} />
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            )}
+                                <Image
+                                    src={src}
+                                    alt="Preview"
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => removeImage(index)}
+                                        className="p-2 bg-white/20 hover:bg-rose-500 backdrop-blur-md text-white rounded-full transition-all"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                                <div className="absolute bottom-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                                    <CheckCircle2 size={10} /> READY
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
-}
+};

@@ -11,9 +11,11 @@ interface CustomInputProps<T extends FieldValues> {
   register: UseFormRegister<T>;
   name: Path<T>;
   errors: FieldErrors<T>;
+  setValue: any;
+  defaultValue?: number;
 }
 
-const AdminSelect = <T extends FieldValues>({ register, errors, name }: CustomInputProps<T>) => {
+const AdminSelect = <T extends FieldValues>({ register, errors, name, setValue, defaultValue }: CustomInputProps<T>) => {
   const [user, setUser] = useState<User[] | null>(null);
   const [error, setError] = useState<string>("")
   const [loading, setLoading] = useState(true)
@@ -30,8 +32,10 @@ const AdminSelect = <T extends FieldValues>({ register, errors, name }: CustomIn
     setLoading(true)
     try {
       const res = await getUserByAdmin({ limit: 100, role: 'instructor' })
-      console.log("select input console", res.data.data)
       setUser(res.data.data)
+      if (defaultValue) {
+        setValue(name, defaultValue);
+      }
       setError('')
     } catch (error) {
       setError('failed to get instructor')

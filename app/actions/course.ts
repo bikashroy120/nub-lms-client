@@ -1,7 +1,7 @@
 import { base_url } from '@/config';
-import { CourseFormValues } from '../dashboard/admin/course/add/page';
 import { getValidAccessToken } from './auth';
 import { buildQueryParams } from '@/lib/utils';
+import { CourseFormValues } from '../dashboard/admin/course/add/page';
 
 export const createCourse = async (data: CourseFormValues) => {
   const token = await getValidAccessToken();

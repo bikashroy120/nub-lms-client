@@ -11,12 +11,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { signUpFunction } from '@/app/actions/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { UserPlus, Mail, Phone, MapPin, Lock, ShieldCheck, Loader2 } from 'lucide-react';
 
 const userSchema = z.object({
-  name: z.string().min(1, 'Title is required'),
-  email: z.string().email().nonempty(),
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address'),
   password: z.string().min(4, 'Password must be at least 4 characters'),
-  role: z.string().nonempty(),
+  role: z.string().min(1, 'Role is required'),
   phone: z.string().optional(),
   address: z.string().optional(),
 });
@@ -29,7 +30,7 @@ const roleOptions = [
 
 type userFormValues = z.infer<typeof userSchema>;
 
-const CreateCoursePage = () => {
+const CreateUserPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -39,6 +40,9 @@ const CreateCoursePage = () => {
     formState: { errors },
   } = useForm<userFormValues>({
     resolver: zodResolver(userSchema),
+    defaultValues: {
+      role: 'user'
+    }
   });
 
   const onSubmit = async (data: userFormValues) => {
@@ -46,89 +50,126 @@ const CreateCoursePage = () => {
     try {
       const res = await signUpFunction(data);
       if (res.success) {
-        toast.success('signup successfully');
+        toast.success('User created successfully');
         router.push('/dashboard/admin/user');
       } else {
         toast.error(res.message);
       }
     } catch (error) {
       console.error(error);
-      toast.error('failed to signup');
+      toast.error('Failed to create user');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className='flex justify-center items-center py-5'>
-      <Card className='w-full max-w-3xl shadow-md border-t-4 border-t-blue-600 mx-4'>
-        <CardHeader className='border-b bg-white'>
-          <CardTitle className='text-2xl font-bold text-gray-800'>
-            Create New User
-          </CardTitle>
-          <p className='text-sm text-gray-500'>
-            Provide all details to set up your ne user
-          </p>
-        </CardHeader>
+    <div className='max-w-4xl mx-auto py-8 px-4'>
+      {/* Header Section */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-100">
+          <UserPlus className="text-white" size={28} />
+        </div>
+        <div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Create New User</h1>
+          <p className="text-sm text-gray-500 font-medium">Fill in the information to register a new member</p>
+        </div>
+      </div>
 
-        <CardContent className='p-6'>
-          <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
-            {/* Title Field */}
-            <CustomInput
-              label='User Name'
-              name='name'
-              register={register}
-              errors={errors}
-              placeholder='Enter user name'
-            />
+      <Card className='shadow-xl shadow-blue-50/50 border-none bg-white/80 backdrop-blur-sm overflow-hidden'>
+        <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-600"></div>
 
-            <CustomInput
-              label='User Email'
-              name='email'
-              register={register}
-              errors={errors}
-              placeholder='Enter user email'
-            />
+        <CardContent className='p-8'>
+          <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
 
-            <CustomSelect
-              label='User Role'
-              name='role'
-              register={register}
-              errors={errors}
-              options={roleOptions}
-            />
+            {/* Form Sections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 
-            <CustomInput
-              label='User Phone'
-              name='phone'
-              register={register}
-              errors={errors}
-              placeholder='Enter user phone'
-            />
+              <div className="space-y-1">
+                <CustomInput
+                  label='Full Name'
+                  name='name'
+                  register={register}
+                  errors={errors}
+                  placeholder='Bikash Chandra'
+                />
+              </div>
 
-            <CustomInput
-              label='User Address'
-              name='address'
-              register={register}
-              errors={errors}
-              placeholder='Enter user address'
-            />
+              <div className="space-y-1">
+                <CustomInput
+                  label='Email Address'
+                  name='email'
+                  register={register}
+                  errors={errors}
+                  placeholder='example@mail.com'
+                />
+              </div>
 
-            <CustomInput
-              label='Password'
-              name='password'
-              register={register}
-              errors={errors}
-              placeholder='e.g. *********'
-            />
+              <div className="space-y-1">
+                <CustomSelect
+                  label='Assign Role'
+                  name='role'
+                  register={register}
+                  errors={errors}
+                  options={roleOptions}
+                />
+              </div>
 
-            <div className='flex flex-col sm:flex-row gap-3 pt-6 border-t'>
+              <div className="space-y-1">
+                <CustomInput
+                  label='Phone Number'
+                  name='phone'
+                  register={register}
+                  errors={errors}
+                  placeholder='+880 1XXX XXXXXX'
+                />
+              </div>
+
+              <div className="md:col-span-2 space-y-1">
+                <CustomInput
+                  label='Home Address'
+                  name='address'
+                  register={register}
+                  errors={errors}
+                  placeholder='Street, City, Country'
+                />
+              </div>
+
+              <div className="md:col-span-2 space-y-1">
+                <CustomInput
+                  label='Access Password'
+                  name='password'
+                  type="password"
+                  register={register}
+                  errors={errors}
+                  placeholder='Create a strong password'
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className='flex items-center justify-end gap-4 pt-6 border-t border-gray-100'>
+              <Button
+                type='button'
+                variant="ghost"
+                onClick={() => router.back()}
+                className='px-6 py-6 border text-gray-500 hover:text-gray-700'
+              >
+                Cancel
+              </Button>
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='flex-1 py-6 bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer'
+                className='min-w-[160px] py-6 bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-200 transition-all active:scale-95'
               >
-                {isLoading ? 'Creating Course...' : 'Create Course'}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create User account'
+                )}
               </Button>
             </div>
           </form>
@@ -138,4 +179,4 @@ const CreateCoursePage = () => {
   );
 };
 
-export default CreateCoursePage;
+export default CreateUserPage;

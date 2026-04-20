@@ -57,9 +57,11 @@ const CourseTable = ({ courses, metaData }: { courses: ICourses[], metaData: IMe
             header: 'Actions',
             accessor: (row: ICourses) => (
                 <div className=' flex items-center gap-3'>
-                    <Button size={'sm'} variant={'outline'}>
-                        Edit
-                    </Button>
+                    <Link href={`/dashboard/admin/course/${row.id}`}>
+                        <Button size={'sm'} variant={'outline'} className=" cursor-pointer">
+                            Edit
+                        </Button>
+                    </Link>
                     <Button
                         size={'sm'}
                         variant={'outline'}
