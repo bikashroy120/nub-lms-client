@@ -30,3 +30,17 @@ export const getCourses = async (query: Record<string, any>) => {
   }
   return await res.json();
 };
+
+export const getSingleCourses = async (id: string) => {
+  const res = await fetch(`${base_url}/course/${id}`, {
+    next: { revalidate: 120, tags: ['courseId'] },
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to get course');
+  }
+  return await res.json();
+};
