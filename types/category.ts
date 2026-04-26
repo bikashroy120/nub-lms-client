@@ -34,3 +34,15 @@ export interface ICourses {
   price: number;
   isPublished: boolean;
 }
+
+export interface IApiResponse<T> {
+  success: boolean;
+  message: string;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPage: number;
+  };
+  data: T;
+}

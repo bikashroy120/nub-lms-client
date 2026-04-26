@@ -1,17 +1,23 @@
 import { getCourses } from '@/app/actions/course'
 import CourseTable from '@/components/dashboard/courses/CourseTable';
 import AdminBreadcrumbs from '@/components/shared/AdminBreadcrumbs'
-import React from 'react'
+import { buildQueryParams } from '@/lib/utils';
+import { Suspense } from 'react';
 
-const Course = async (
+interface PageProps {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-) => {
-    const result = await getCourses({});
+const Course = async ({ searchParams }: PageProps) => {
+    const params = await searchParams;
+    const query = buildQueryParams(params);
     return (
         <div>
             <AdminBreadcrumbs title='Course List' />
             <div>
-                <CourseTable courses={result.data.data} metaData={result.data.meta} />
+                <Suspense fallback={<div>Loading Filters...</div>}>
+                    <CourseTable query={query} />
+                </Suspense>
             </div>
         </div>
     )
