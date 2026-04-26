@@ -15,9 +15,9 @@ const AdminBreadcrumbs = ({ title = 'User' }: { title: string }) => {
   if (pathNodes.length === 0) return null;
 
   return (
-    <div className='mb-7'>
+    <div className='mb-5 flex items-center justify-between'>
       {/* Page Title & Status */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 ">
         <h2 className='text-2xl font-black text-gray-900 tracking-tight'>
           {title}
         </h2>

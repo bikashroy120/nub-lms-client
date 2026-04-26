@@ -11,7 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { signUpFunction } from '@/app/actions/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { UserPlus, Mail, Phone, MapPin, Lock, ShieldCheck, Loader2 } from 'lucide-react';
+import { UserPlus, Mail, Phone, MapPin, Lock, ShieldCheck, Loader2, ArrowLeft } from 'lucide-react';
+import { usePostUser } from '@/hooks/useUsers';
+import AdminBreadcrumbs from '@/components/shared/AdminBreadcrumbs';
 
 const userSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -45,28 +47,20 @@ const CreateUserPage = () => {
     }
   });
 
+  const { mutate, isPending } = usePostUser()
+
   const onSubmit = async (data: userFormValues) => {
-    setIsLoading(true);
-    try {
-      const res = await signUpFunction(data);
-      if (res.success) {
-        toast.success('User created successfully');
+    mutate(data, {
+      onSuccess: () => {
         router.push('/dashboard/admin/user');
-      } else {
-        toast.error(res.message);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to create user');
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
-    <div className='max-w-4xl mx-auto py-8 px-4'>
+    <div className='max-w-4xl mx-auto  px-4'>
       {/* Header Section */}
-      <div className="flex items-center gap-3 mb-8">
+      {/* <div className="flex items-center gap-3 mb-8">
         <div className="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-100">
           <UserPlus className="text-white" size={28} />
         </div>
@@ -74,12 +68,23 @@ const CreateUserPage = () => {
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">Create New User</h1>
           <p className="text-sm text-gray-500 font-medium">Fill in the information to register a new member</p>
         </div>
+      </div> */}
+
+      <div className="flex flex-col mb-8">
+        {/* New Back Button */}
+        <AdminBreadcrumbs title='User Add' />
+
+        <button
+          onClick={() => router.back()}
+          className="flex items-center cursor-pointer gap-2 text-gray-500 hover:text-blue-600 transition-colors w-fit font-medium text-sm"
+        >
+          <ArrowLeft size={18} />
+          Back to list
+        </button>
       </div>
 
-      <Card className='shadow-xl shadow-blue-50/50 border-none bg-white/80 backdrop-blur-sm overflow-hidden'>
-        <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-600"></div>
-
-        <CardContent className='p-8'>
+      <Card className='shadow-xl shadow border-none bg-white backdrop-blur-sm overflow-hidden'>
+        <CardContent className='px-8 py-5'>
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
 
             {/* Form Sections */}
@@ -150,19 +155,11 @@ const CreateUserPage = () => {
             {/* Action Buttons */}
             <div className='flex items-center justify-end gap-4 pt-6 border-t border-gray-100'>
               <Button
-                type='button'
-                variant="ghost"
-                onClick={() => router.back()}
-                className='px-6 py-6 border text-gray-500 hover:text-gray-700'
-              >
-                Cancel
-              </Button>
-              <Button
                 type='submit'
-                disabled={isLoading}
-                className='min-w-[160px] py-6 bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-200 transition-all active:scale-95'
+                disabled={isPending}
+                className=' w-full py-6 bg-primary hover:bg-primary text-white font-bold shadow-lg shadow-blue-200 transition-all active:scale-95'
               >
-                {isLoading ? (
+                {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating...

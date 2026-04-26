@@ -8,6 +8,8 @@ import Link from 'next/link';
 import SearchFilter from '@/components/shared/SearchFilter';
 import CustomFilter from '@/components/shared/CustomFilter';
 import { useUsers } from '@/hooks/useUsers';
+import UserUpdate from './UserUpdate';
+import UserDelete from './UserDelete';
 
 const roleOptions = [
   { label: "Admin", value: "admin" },
@@ -16,9 +18,7 @@ const roleOptions = [
 ];
 
 const UsersTable = ({ initialParams }: { initialParams: string }) => {
-
   const { data, isLoading, } = useUsers(initialParams);
-
   const columns = [
     {
       header: 'ID',
@@ -48,16 +48,8 @@ const UsersTable = ({ initialParams }: { initialParams: string }) => {
       header: 'Actions',
       accessor: (row: User) => (
         <div className=' flex items-center gap-3'>
-          <Button size={'sm'} variant={'outline'}>
-            Edit
-          </Button>
-          <Button
-            size={'sm'}
-            variant={'outline'}
-            className=' bg-red-100 text-red-600 border border-red-200 cursor-pointer hover:bg-red-500 hover:text-white duration-200'
-          >
-            Delete
-          </Button>
+          <UserUpdate user={row} />
+          <UserDelete id={row.id} name={row.name} />
         </div>
       ),
     },

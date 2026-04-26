@@ -79,11 +79,11 @@ const CreateCoursePage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-6">
+    <div className=" max-w-5xl mx-auto">
       {/* Header with minimal breadcrumb */}
       <AdminBreadcrumbs title='Add Course' />
 
-      <Card className="border-none  bg-white/70  rounded-xl overflow-hidden">
+      <Card className="border-none  bg-white">
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="p-0">
 

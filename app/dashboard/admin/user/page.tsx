@@ -19,7 +19,6 @@ const page = async ({ searchParams }: PageProps) => {
       <AdminBreadcrumbs title='User List' />
       <div>
         {/* <UsersTable users={usersData.data.data} /> */}
-
         <Suspense fallback={<div>Loading Filters...</div>}>
           <UsersTable initialParams={query} />
         </Suspense>
