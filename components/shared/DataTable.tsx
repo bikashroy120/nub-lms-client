@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react'; // লোডিং আইকনের জন্য
 
 interface DataTableProps<T> {
   columns: {
@@ -17,13 +18,25 @@ interface DataTableProps<T> {
     className?: string;
   }[];
   data: T[];
+  isLoading?: boolean; // নতুন প্রপ
 }
 
-export function DataTable<T>({ columns, data }: DataTableProps<T>) {
+export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
   return (
-    <div className='border  border-gray-200 overflow-hidden rounded-md'>
+    <div className='border border-gray-200 overflow-hidden rounded-md relative'>
+
+      {/* Loading Overlay: টেবিলের ওপর ঝাপসা একটি লেয়ার */}
+      {isLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-[1px]">
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+            <span className="text-sm font-medium text-gray-600">Loading data...</span>
+          </div>
+        </div>
+      )}
+
       <Table>
-        <TableHeader className=' bg-gray-600'>
+        <TableHeader className='bg-gray-600'>
           <TableRow className='hover:bg-gray-600/50 transition-colors'>
             {columns.map((column, index) => (
               <TableHead
@@ -38,8 +51,10 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
             ))}
           </TableRow>
         </TableHeader>
+
         <TableBody>
-          {data && data.length > 0 ? (
+          {/* যদি ডাটা থাকে এবং লোডিং না হয় */}
+          {!isLoading && data && data.length > 0 ? (
             data.map((item, rowIndex) => (
               <TableRow
                 key={rowIndex}
@@ -64,20 +79,25 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
                 ))}
               </TableRow>
             ))
-          ) : (
-            /* Empty State: যখন ডাটা নেই */
+          ) : !isLoading ? (
+            /* Empty State: যখন লোডিং শেষ কিন্তু কোনো ডাটা নেই */
             <TableRow>
               <TableCell
                 colSpan={columns.length}
-                className='h-32 text-center text-muted-foreground bg-white'
+                className='h-40 text-center text-muted-foreground bg-white'
               >
                 <div className='flex flex-col items-center justify-center space-y-1'>
-                  <span className='font-medium'>No results found.</span>
-                  <span className='text-xs'>
-                    Try adding some data to see it here.
+                  <span className='font-medium text-lg'>No results found.</span>
+                  <span className='text-sm'>
+                    Try adjusting your filters or adding some data.
                   </span>
                 </div>
               </TableCell>
+            </TableRow>
+          ) : (
+            /* Loading State Placeholder: লোড হওয়ার সময় টেবিলের বডি খালি রাখা */
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-40 bg-white" />
             </TableRow>
           )}
         </TableBody>

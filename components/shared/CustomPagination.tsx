@@ -3,75 +3,74 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 interface PaginationProps {
-  totalPages: number;
+  total: number;
+  limit: number;
 }
 
-export function CustomPagination({ totalPages }: PaginationProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+export function CustomPagination({ total, limit }: PaginationProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // পেজ নাম্বার জেনারেট করার ফাংশন
+  const currentPage = Number(searchParams.get('page')) || 1;
+
+  const totalPages = Math.ceil(total / limit) || 1;
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
-    const showMax = 3; // দুই পাশে কয়টি করে নাম্বার দেখাবে
+    const showMax = 3;
 
     if (totalPages <= 7) {
-      // যদি টোটাল পেজ কম হয়, সব দেখাও
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
-      // সবসময় প্রথম পেজ দেখাও
       pages.push(1);
-
-      if (currentPage > showMax + 1) {
-        pages.push('...');
-      }
+      if (currentPage > showMax + 1) pages.push('...');
 
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
 
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
+      for (let i = start; i <= end; i++) pages.push(i);
 
-      if (currentPage < totalPages - showMax) {
-        pages.push('...');
-      }
-
-      // সবসময় শেষ পেজ দেখাও
+      if (currentPage < totalPages - showMax) pages.push('...');
       pages.push(totalPages);
     }
     return pages;
   };
-
-  const pageNumbers = getPageNumbers();
+  if (totalPages <= 1) return null;
 
   return (
-    <div className='flex items-center justify-between  px-2 pt-4'>
-      <div className='text-sm text-info'>
-        Page <span className='font-medium text-title'>{currentPage}</span> of{' '}
-        <span className='font-medium text-title'>{totalPages}</span>
+    <div className='flex items-center justify-between px-2 pt-4 border-t border-gray-100'>
+      <div className='text-sm text-gray-500'>
+        Showing <span className='font-medium text-gray-900'>{(currentPage - 1) * limit + 1}</span> to{' '}
+        <span className='font-medium text-gray-900'>{Math.min(currentPage * limit, total)}</span> of{' '}
+        <span className='font-medium text-gray-900'>{total}</span> results
       </div>
 
       <div className='flex items-center space-x-2'>
-        {/* Previous Button */}
         <Button
           variant='outline'
           size='icon'
           className='h-8 w-8'
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
           <ChevronLeft className='h-4 w-4' />
         </Button>
 
-        {/* Dynamic Page Numbers */}
         <div className='flex items-center gap-1'>
-          {pageNumbers.map((page, index) => {
+          {getPageNumbers().map((page, index) => {
             if (page === '...') {
               return (
-                <span key={`dots-${index}`} className='px-2 text-info'>
+                <span key={`dots-${index}`} className='px-2 text-gray-400'>
                   ...
                 </span>
               );
@@ -84,24 +83,20 @@ export function CustomPagination({ totalPages }: PaginationProps) {
                   'h-8 w-8 text-sm transition-all',
                   currentPage === page
                     ? 'bg-primary hover:bg-primary/90'
-                    : 'text-info hover:bg-gray-50',
+                    : 'text-gray-600 hover:bg-gray-50',
                 )}
-                onClick={() => setCurrentPage(page as number)}
+                onClick={() => handlePageChange(page as number)}
               >
                 {page}
               </Button>
             );
           })}
         </div>
-
-        {/* Next Button */}
         <Button
           variant='outline'
           size='icon'
           className='h-8 w-8'
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
+          onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
           <ChevronRight className='h-4 w-4' />

@@ -5,6 +5,7 @@ import { getMe } from './actions/auth';
 import '@/styles/globals.css';
 import { AuthProvider } from '@/lib/context/auth-context';
 import { Toaster } from 'sonner';
+import QueryProvider from '@/lib/context/queryProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -46,7 +47,9 @@ export default async function RootLayout({
       <body className={`${inter.className} antialiased h-full`}>
         <AuthProvider userData={userData?.data}>
           <LMSProvider>
-            {children}
+            <QueryProvider>
+              {children}
+            </QueryProvider>
             <Toaster position='top-center' richColors closeButton />
           </LMSProvider>
         </AuthProvider>
