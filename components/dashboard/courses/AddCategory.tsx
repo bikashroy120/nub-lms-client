@@ -8,6 +8,7 @@ import {
   DialogClose,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { useCategories, useCreateCategory } from '@/hooks/useCategory';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,8 +23,6 @@ type CategoryValues = z.infer<typeof categorySchema>;
 
 const AddCategory = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-
   const {
     register,
     handleSubmit,
@@ -32,23 +31,14 @@ const AddCategory = () => {
     resolver: zodResolver(categorySchema),
   });
 
-  const onSubmit = async (data: CategoryValues) => {
-    setLoading(true);
-    try {
-      const response = await addCategory(data);
-      if (response.success) {
-        setOpen(false);
-        toast.success('Category added successfully');
-      } else {
-        console.error('Failed to add category:', response);
-        toast.error(response.message || 'Failed to add category');
-      }
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
+  const { mutate, isPending } = useCreateCategory()
 
-    console.log(data);
+  const onSubmit = async (data: CategoryValues) => {
+    mutate(data, {
+      onSuccess: () => {
+        setOpen(false)
+      }
+    })
   };
 
   return (
@@ -74,8 +64,8 @@ const AddCategory = () => {
           <DialogClose asChild>
             <Button variant='outline'>Cancel</Button>
           </DialogClose>
-          <Button type='submit' className=' cursor-pointer' disabled={loading}>
-            {loading ? 'Adding...' : 'Add Category'}
+          <Button type='submit' className=' cursor-pointer' disabled={isPending}>
+            {isPending ? 'Adding...' : 'Add Category'}
           </Button>
         </DialogFooter>
       </form>

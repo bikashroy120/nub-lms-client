@@ -2,6 +2,7 @@
 
 import { CustomPagination } from "@/components/shared/CustomPagination"
 import { DataTable } from "@/components/shared/DataTable"
+import SearchFilter from "@/components/shared/SearchFilter"
 import { Button } from "@/components/ui/button"
 import { useGetCourses } from "@/hooks/useCourse"
 import { ICourses, IMetaData } from "@/types/category"
@@ -78,10 +79,17 @@ const CourseTable = ({ query, }: { query: string }) => {
     return (
         <div className=' bg-card shadow p-5 rounded-md'>
             <div className=' flex items-center gap-2 justify-between'>
-                <h2 className=' font-semibold'>Course List</h2>
-                <Button className=' py-5'>
-                    <Link href={'/dashboard/admin/course/add'}>Add Course</Link>
-                </Button>
+                <h2 className=' font-semibold text-lg'>Course List</h2>
+                <div className=" flex items-center gap-5">
+                    <SearchFilter
+                        queryKey="search"
+                        placeholder="User name or email..."
+                        className="w-72"
+                    />
+                    <Button className=' py-5'>
+                        <Link href={'/dashboard/admin/course/add'}>Add Course</Link>
+                    </Button>
+                </div>
             </div>
 
             <div className=' mt-5'>

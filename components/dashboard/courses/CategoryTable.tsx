@@ -1,31 +1,27 @@
 'use client';
 
-import { CustomPagination } from '@/components/shared/CustomPagination';
 import { DataTable } from '@/components/shared/DataTable';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import AddCategory from './AddCategory';
+import { useCategories } from '@/hooks/useCategory';
+import UpdateCategory from './UpdateCategory';
+import { Category } from '@/types/category';
+import DeleteCategory from './DeleteCategory';
 
-interface Category {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
+const CategoryTable = () => {
 
-const CategoryTable = ({ category }: { category: Category[] }) => {
+  const { data, isLoading } = useCategories()
+
   const columns = [
     { header: 'ID', accessor: 'id' as keyof Category },
     { header: 'Name', accessor: 'name' as keyof Category },
     {
       header: 'Action',
       accessor: (category: Category) => (
-        <Button
-          variant='ghost'
-          onClick={() => console.log('Edit', category.id)}
-        >
-          Edit
-        </Button>
+        <div className=' flex items-center gap-4'>
+          <UpdateCategory row={category} />
+          <DeleteCategory id={category.id} name={category.name} />
+        </div>
       ),
     },
   ];
@@ -38,8 +34,7 @@ const CategoryTable = ({ category }: { category: Category[] }) => {
       </div>
 
       <div className=' mt-5'>
-        <DataTable data={category} columns={columns} />
-        <CustomPagination totalPages={20} />
+        <DataTable data={data?.data} columns={columns} isLoading={isLoading} />
       </div>
     </div>
   );
