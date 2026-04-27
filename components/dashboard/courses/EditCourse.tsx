@@ -67,9 +67,9 @@ const EditCourse = ({ course }: { course: ICourses }) => {
         }
     }, [course])
 
-    console.log(course)
-
     const isPublished = watch('isPublished');
+
+    
 
     const onSubmit = async (data: CourseFormValues) => {
         setLoading(true);

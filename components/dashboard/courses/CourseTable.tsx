@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { useGetCourses } from "@/hooks/useCourse"
 import { ICourses, IMetaData } from "@/types/category"
 import Link from "next/link"
+import CourseCategoryFilter from "./CourseCategoryFilter"
 
 
 const CourseTable = ({ query, }: { query: string }) => {
@@ -82,10 +83,11 @@ const CourseTable = ({ query, }: { query: string }) => {
                 <h2 className=' font-semibold text-lg'>Course List</h2>
                 <div className=" flex items-center gap-5">
                     <SearchFilter
-                        queryKey="search"
-                        placeholder="User name or email..."
+                        queryKey="searchTram"
+                        placeholder="Course title or category..."
                         className="w-72"
                     />
+                    <CourseCategoryFilter />
                     <Button className=' py-5'>
                         <Link href={'/dashboard/admin/course/add'}>Add Course</Link>
                     </Button>

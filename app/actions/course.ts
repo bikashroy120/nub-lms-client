@@ -33,7 +33,7 @@ export const getCourses = async (query: Record<string, any>) => {
 
 export const getSingleCourses = async (id: string) => {
   const res = await fetch(`${base_url}/course/${id}`, {
-    next: { revalidate: 120, tags: ['courseId'] },
+    cache: 'no-store',
     headers: {
       'Content-type': 'application/json',
     },
