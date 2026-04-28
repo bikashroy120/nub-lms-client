@@ -8,6 +8,8 @@ import { useGetCourses } from "@/hooks/useCourse"
 import { ICourses, IMetaData } from "@/types/category"
 import Link from "next/link"
 import CourseCategoryFilter from "./CourseCategoryFilter"
+import { Edit } from "lucide-react"
+import DeleteCourse from "./DeleteCourse"
 
 
 const CourseTable = ({ query, }: { query: string }) => {
@@ -48,7 +50,15 @@ const CourseTable = ({ query, }: { query: string }) => {
         },
         {
             header: "Lesson",
-            accessor: 'lessonCount' as keyof ICourses,
+            accessor: (row: ICourses) => (
+                <div>
+                    <Link href={`/dashboard/admin/course/lesson/${row.id}`}>
+                        <Button size={'sm'} variant={'default'} className="py-4 text-xs cursor-pointer">
+                            View ({row.lessonCount})
+                        </Button>
+                    </Link>
+                </div >
+            ),
         },
         {
             header: "Published",
@@ -62,16 +72,10 @@ const CourseTable = ({ query, }: { query: string }) => {
                 <div className=' flex items-center gap-3'>
                     <Link href={`/dashboard/admin/course/${row.id}`}>
                         <Button size={'sm'} variant={'outline'} className=" cursor-pointer">
-                            Edit
+                            <Edit size={14} />
                         </Button>
                     </Link>
-                    <Button
-                        size={'sm'}
-                        variant={'outline'}
-                        className=' bg-red-100 text-red-600 border border-red-200 cursor-pointer hover:bg-red-500 hover:text-white duration-200'
-                    >
-                        Delete
-                    </Button>
+                    <DeleteCourse id={row.id} name={row.title} />
                 </div>
             ),
         },

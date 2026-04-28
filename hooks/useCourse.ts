@@ -26,7 +26,9 @@ const postCourses = async (data: CourseFormValues) => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to create course');
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.message || 'Something went wrong';
+    throw new Error(errorMessage);
   }
   return response.json();
 };
@@ -49,7 +51,9 @@ const updateCourses = async ({
   });
 
   if (!response.ok) {
-    throw new Error('Failed to update course');
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.message || 'Something went wrong';
+    throw new Error(errorMessage);
   }
   return response.json();
 };
@@ -65,7 +69,9 @@ const deleteCourses = async (id: number) => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to create course');
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.message || 'Something went wrong';
+    throw new Error(errorMessage);
   }
   return response.json();
 };
@@ -100,8 +106,8 @@ export const useUpdateCourse = () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       toast.success('Course created successfully');
     },
-    onError: () => {
-      toast.error('Failed to create course');
+    onError: (error) => {
+      toast.error(error.message || 'Failed to create course');
     },
   });
 };
@@ -114,8 +120,8 @@ export const useDeleteCourse = () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       toast.success('Course created successfully');
     },
-    onError: () => {
-      toast.error('Failed to create course');
+    onError: (error) => {
+      toast.error(error.message || 'Failed to create course');
     },
   });
 };

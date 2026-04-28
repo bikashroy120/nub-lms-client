@@ -39,7 +39,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
             {/* Courses Grid */}
             <div className="lg:col-span-4">
               <Suspense fallback={<h2>Loading</h2>}>
-                <CoursesList course={result?.data?.data} />
+                <CoursesList course={result?.data} />
               </Suspense>
             </div>
           </div>

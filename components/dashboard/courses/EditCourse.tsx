@@ -7,10 +7,10 @@ import { z } from 'zod';
 import {
     Loader2,
     BadgeDollarSign,
-    ChevronRight
+    ChevronRight,
+    ArrowLeft
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import CustomInput from '@/components/shared/CustomInput';
 import { CustomSelect } from '@/components/shared/CustomSelect';
@@ -22,10 +22,10 @@ import { Switch } from '@/components/ui/switch';
 import AdminSelect from '@/components/dashboard/courses/AdminSelect';
 import CategorySelect from '@/components/dashboard/courses/CategorySelect';
 import AdminBreadcrumbs from '@/components/shared/AdminBreadcrumbs';
-import { createCourse } from '@/app/actions/course';
 import { ImageUpload } from '@/components/shared/ImageUpload';
 import { AddTags } from '@/components/dashboard/courses/AddTags';
 import { ICourses } from '@/types/category';
+import { useUpdateCourse } from '@/hooks/useCourse';
 
 
 const courseSchema = z.object({
@@ -69,29 +69,30 @@ const EditCourse = ({ course }: { course: ICourses }) => {
 
     const isPublished = watch('isPublished');
 
-    
+    const { mutate, isPending } = useUpdateCourse()
 
     const onSubmit = async (data: CourseFormValues) => {
-        setLoading(true);
-        try {
-            const res = await createCourse({ ...data, learn, included: include });
-            if (res.success) {
-                toast.success("Course created successfully!");
+        const payload = { ...data, learn, included: include }
+        mutate({ id: course.id, data: payload }, {
+            onSuccess: () => {
                 router.push('/dashboard/admin/course');
-            } else {
-                toast.error(res.message);
             }
-        } catch (error) {
-            toast.error('Failed to create course');
-        } finally {
-            setLoading(false);
-        }
+        });
     };
 
     return (
         <div className="max-w-5xl mx-auto px-4 md:px-6">
             {/* Header with minimal breadcrumb */}
-            <AdminBreadcrumbs title='Update Course' />
+            <div className="flex flex-col mb-8">
+                <AdminBreadcrumbs title='Update Course' />
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center cursor-pointer gap-2 text-gray-500 hover:text-blue-600 transition-colors w-fit font-medium text-sm"
+                >
+                    <ArrowLeft size={18} />
+                    Back to list
+                </button>
+            </div>
 
             <Card className="border-none  bg-white/70  rounded-xl overflow-hidden">
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -181,10 +182,10 @@ const EditCourse = ({ course }: { course: ICourses }) => {
                             {/* Section 3: Pricing & Publish */}
                             <div className="pt-4 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8">
                                 <Button
-                                    disabled={loading}
+                                    disabled={isPending}
                                     className=" bg-primary hover:bg-indigo-700 w-full text-white h-12 px-10 rounded-2xl shadow-xl cursor-pointer transition-all active:scale-95 group"
                                 >
-                                    {loading ? (
+                                    {isPending ? (
                                         <Loader2 className="animate-spin" />
                                     ) : (
                                         <>
