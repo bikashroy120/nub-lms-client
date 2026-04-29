@@ -1,5 +1,8 @@
 import { getSingleCourses } from '@/app/actions/course'
+import Footer from '@/components/Footer'
 import { Header } from '@/components/header'
+import DetailsLeft from '@/components/pages/courseDetails/DetailsLeft'
+import DetailsRight from '@/components/pages/courseDetails/DetailsRight'
 import DetailsTopCard from '@/components/pages/courseDetails/DetailsTopCard'
 
 export default async function CourseDetailsPage() {
@@ -31,11 +34,13 @@ export default async function CourseDetailsPage() {
 
         <DetailsTopCard />
         <div className=" max-w-6xl mx-auto px-4 relative z-10">
-          <div className="grid gap-8 lg:grid-cols-3">
-
+          <div className="grid gap-8 lg:grid-cols-3 py-10">
+            <DetailsLeft course={result?.data} />
+            <DetailsRight course={result?.data} />
           </div>
         </div>
       </main>
+      <Footer />
     </>
   )
 }
