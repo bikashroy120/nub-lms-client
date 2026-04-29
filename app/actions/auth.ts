@@ -65,7 +65,6 @@ export async function getValidAccessToken() {
   let accessToken = cookieStore.get('accessToken')?.value;
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
-  // যদি Access Token না থাকে কিন্তু Refresh Token থাকে
   if (!accessToken && refreshToken) {
     try {
       const res = await fetch(`${base_url}/auth/refresh-token`, {
@@ -87,7 +86,7 @@ export async function getValidAccessToken() {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             path: '/',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
+            maxAge: 10 * 60,
           });
 
           cookieStore.set('refreshToken', refreshToken, {
@@ -182,7 +181,7 @@ export const loginFunction = async (data: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 10 * 60,
     });
 
     cookieStore.set('refreshToken', result.data.refreshToken, {

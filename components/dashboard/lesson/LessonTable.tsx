@@ -6,6 +6,8 @@ import AddCategory from '../courses/AddCategory';
 import { useGetLesson } from '@/hooks/useLesson';
 import { DataTable } from '@/components/shared/DataTable';
 import AddLesson from './AddLesson';
+import UpdateLesson from './UpdateLesson';
+import DeleteLesson from './DeleteLesson';
 
 const LessonTable = ({ id }: { id: number }) => {
 
@@ -19,8 +21,8 @@ const LessonTable = ({ id }: { id: number }) => {
             header: 'Action',
             accessor: (row: ILesson) => (
                 <div className=' flex items-center gap-4'>
-                    {/* <UpdateCategory row={category} />
-                    <DeleteCategory id={category.id} name={category.name} /> */}
+                    <UpdateLesson lesson={row} />
+                    <DeleteLesson id={row.id} name={row.title} />
                 </div>
             ),
         },

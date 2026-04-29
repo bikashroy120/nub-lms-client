@@ -4,25 +4,18 @@ import CustomDialog from '@/components/shared/CustomDialog';
 import CustomInput from '@/components/shared/CustomInput';
 import { Button } from '@/components/ui/button';
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
-import { useCreateLesson } from '@/hooks/useLesson';
+import { useUpdateLesson } from '@/hooks/useLesson';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-// Tanstack Query logic use korle hook-ti change hobe (niche example deya holo)
-// import { useCreateLesson } from '@/hooks/useLesson'; 
+import { Edit } from 'lucide-react'; // Optional: for an icon
+import { lessonSchema, LessonValues } from './AddLesson';
 
-// 1. Zod Schema design
-export const lessonSchema = z.object({
-    title: z.string().min(2, 'Title is required'),
-    videoUrl: z.string().url('Invalid video URL').or(z.string().min(1, 'Video URL is required')),
-    content: z.string().min(10, 'Content must be at least 10 characters'),
-    courseId: z.number().optional(),
-});
+interface UpdateLessonProps {
+    lesson: LessonValues & { id: number };
+}
 
-export type LessonValues = z.infer<typeof lessonSchema>;
-
-const AddLesson = ({ id }: { id: number }) => {
+const UpdateLesson = ({ lesson }: UpdateLessonProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
     const {
@@ -32,54 +25,59 @@ const AddLesson = ({ id }: { id: number }) => {
         reset,
     } = useForm<LessonValues>({
         resolver: zodResolver(lessonSchema),
+        defaultValues: {
+            title: lesson.title,
+            videoUrl: lesson.videoUrl,
+            content: lesson.content,
+        },
     });
 
-    const { mutate, isPending } = useCreateLesson();
+    const { mutate, isPending } = useUpdateLesson();
 
-    const onSubmit = async (data: LessonValues) => {
-        mutate({ ...data, courseId: id }, {
-            onSuccess: () => {
-                setOpen(false);
-                reset();
+    const onSubmit = (data: LessonValues) => {
+        mutate(
+            { id: lesson.id, data },
+            {
+                onSuccess: () => {
+                    setOpen(false);
+                },
             }
-        })
-
+        );
     };
 
     return (
         <CustomDialog
             open={open}
             onOpenChange={setOpen}
-            title='Add New Lesson'
-            description='Fill in the details for the new lesson.'
-            trigger={<Button>Add Lesson</Button>}
+            title='Update Lesson'
+            description='Edit the details of this lesson.'
+            trigger={
+                <Button size="sm" variant="outline" className="flex items-center gap-2 cursor-pointer">
+                    <Edit size={14} />
+                </Button>
+            }
         >
             <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-                {/* Lesson Title */}
                 <CustomInput
                     label='Lesson Title'
                     name='title'
                     register={register}
                     errors={errors}
-                    placeholder='Enter lesson title'
                 />
 
-                {/* Video URL */}
                 <CustomInput
                     label='Video URL'
                     name='videoUrl'
                     register={register}
                     errors={errors}
-                    placeholder='e.g. https://youtube.com/...'
                 />
 
                 <div className="flex flex-col gap-1.5">
                     <label className="text-sm font-medium">Content</label>
                     <textarea
                         {...register('content')}
-                        className={`flex min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.content ? 'border-red-500' : 'border-input'
+                        className={`flex min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm ... ${errors.content ? 'border-red-500' : 'border-input'
                             }`}
-                        placeholder="Enter lesson description or content"
                     />
                     {errors.content && (
                         <p className="text-xs text-red-500">{errors.content.message}</p>
@@ -90,12 +88,8 @@ const AddLesson = ({ id }: { id: number }) => {
                     <DialogClose asChild>
                         <Button variant='outline' type="button">Cancel</Button>
                     </DialogClose>
-                    <Button
-                        type='submit'
-                        className='cursor-pointer'
-                        disabled={isPending}
-                    >
-                        {isPending ? 'Adding...' : 'Add Lesson'}
+                    <Button type='submit' disabled={isPending}>
+                        {isPending ? 'Updating...' : 'Save Changes'}
                     </Button>
                 </DialogFooter>
             </form>
@@ -103,4 +97,4 @@ const AddLesson = ({ id }: { id: number }) => {
     );
 };
 
-export default AddLesson;
+export default UpdateLesson;
