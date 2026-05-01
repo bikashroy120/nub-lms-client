@@ -58,9 +58,11 @@ const DetailsRight = ({ course }: DetailsLeftProps) => {
                     </div>
 
                     <div className="space-y-3 pt-2 pb-7">
-                        <Button className="w-full h-12 bg-primary cursor-pointer hover:bg-emerald-600 text-white font-bold text-base rounded-xl transition-all shadow-md shadow-emerald-200">
-                            Enroll Now
-                        </Button>
+                        <Link href={`/payment/${course.id}`}>
+                            <Button className="w-full h-12 bg-primary cursor-pointer hover:bg-emerald-600 text-white font-bold text-base rounded-xl transition-all shadow-md shadow-emerald-200">
+                                Enroll Now
+                            </Button>
+                        </Link>
 
                     </div>
                 </div>

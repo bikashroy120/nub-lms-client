@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/lib/context/auth-context';
+import UserButtonHome from './UserButtonHome';
 
 export function Header() {
   const { currentUser, setCurrentUser } = useLMS();
@@ -72,7 +73,7 @@ export function Header() {
           </Link>
         </nav>
 
-        <div className='flex items-center gap-4'>
+        {/* <div className='flex items-center gap-4'>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -117,7 +118,9 @@ export function Header() {
               </Link>
             </>
           )}
-        </div>
+        </div> */}
+
+        <UserButtonHome />
       </div>
     </header>
   );

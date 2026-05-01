@@ -7,7 +7,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { json } from 'stream/consumers';
 
-export async function handleGoogleLogin() {
+export async function handleGoogleLogin(pastUrl = '') {
   let authUrl = '';
 
   const cookieStore = await cookies();
@@ -43,6 +43,15 @@ export async function handleGoogleLogin() {
       path: '/',
       maxAge: 600000,
     });
+
+    if (pastUrl) {
+      cookieStore.set('return_to', pastUrl, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 600000,
+      });
+    }
   } catch (error) {
     console.error('Auth Error:', error);
     return;
