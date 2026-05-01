@@ -78,9 +78,9 @@ const DetailsLeft = ({ course }: DetailsLeftProps) => {
                         </div>
                     ) : (
                         <div className="divide-y divide-border/50">
-                            {course.allLessons.map((lesson, index) => (
+                            {course?.allLessons.length && course?.allLessons.map((lesson, index) => (
                                 <div
-                                    key={lesson.id}
+                                    key={lesson?.id}
                                     className="group flex items-center justify-between p-4 rounded-md hover:bg-primary/[0.03] transition-all cursor-pointer"
                                 >
                                     <div className="flex items-center gap-4">
@@ -94,14 +94,14 @@ const DetailsLeft = ({ course }: DetailsLeftProps) => {
                                                 <PlayCircle className="h-4 w-4" />
                                             </div>
                                             <p className="text-sm font-semibold text-foreground/80 group-hover:text-primary transition-colors">
-                                                {lesson.title}
+                                                {lesson?.title}
                                             </p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                         <Badge variant="outline" className="font-normal text-[10px] py-0 px-2 text-muted-foreground">
-                                            {lesson.duration} min
+                                            {lesson?.duration} min
                                         </Badge>
                                         {/* লক আইকন (যদি কোর্স কেনা না থাকে এমন কন্ডিশন দিতে চান) */}
                                         {/* <Lock className="h-3.5 w-3.5 text-muted-foreground/40" /> */}
@@ -138,12 +138,18 @@ const DetailsLeft = ({ course }: DetailsLeftProps) => {
                 </div>
             </Card>
 
-            <Card className="p-6 sm:p-7 shadow-sm border-border/60">
-                <h2 className="text-xl font-bold mb-2 text-foreground">
-                    এই কোর্সে আপনি কী কী শিখবেন?
-                </h2>
+            <Card className="p-0 shadow-sm border-border/60">
+                <div className="p-6 border-b bg-muted/20">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                        <ListVideo className="h-5 w-5 text-primary" />
+                        এই কোর্সে আপনি কী কী শিখবেন?
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-1">
+                        Total {course?.allLessons?.length || 0} lessons • 12 hours of video
+                    </p>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
+                <div className="grid p-6 grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
                     {features.map((feature, index) => (
                         <div key={index} className="flex items-center gap-3 group">
                             <div className="flex-shrink-0">

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Lock, GraduationCap, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { GoogleLoginButton } from '@/components/auth/GoogleLoginButton';
 import { handleGoogleLogin, loginFunction } from '@/app/actions/auth';
 import { z } from 'zod';
@@ -27,6 +27,10 @@ export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const { setUserData } = useAuth()
+  const searchParams = useSearchParams()
+  const isPayment = searchParams.get('payment');
+  const id = searchParams.get('id');
+  console.log(isPayment, id)
 
   const {
     register,
@@ -46,7 +50,11 @@ export default function LoginPage() {
           router.push('/dashboard/admin');
           setUserData(result.data.user)
         } else {
-          router.push('/');
+          if (isPayment) {
+            router.push(`/payment/${id}`);
+          } else {
+            router.push('/');
+          }
         }
         router.refresh();
       } else {
@@ -138,10 +146,9 @@ export default function LoginPage() {
 
               {/* Social Buttons */}
               <div className='grid grid-cols-2 gap-3'>
-                <form action={handleGoogleLogin}>
+                <form action={() => handleGoogleLogin(isPayment ? `/payment/${id}` : "")}>
                   <GoogleLoginButton />
                 </form>
-
                 <Button variant='outline'>💻 GitHub</Button>
               </div>
 
